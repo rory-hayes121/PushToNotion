@@ -1,0 +1,31 @@
+name: Push to Notion
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "documentation/**"
+
+jobs:
+  push_to_notion:
+    runs-on: ubuntu-latest
+    name: Convert Markdown to Notion Page
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Convert Markdown to Notion
+        run: |
+          node convertToNotion.js
+        env:
+          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
+          PARENT_PAGE_ID: ${{ secrets.PARENT_PAGE_ID }}
