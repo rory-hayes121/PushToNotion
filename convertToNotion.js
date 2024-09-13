@@ -107,6 +107,11 @@ function markdownToBlocks(markdownContent) {
     }
   });
 
+  // Handle any remaining list items if the document ends with a list
+  if (listItems.length > 0) {
+    blocks.push(...listItems);
+  }
+
   return blocks;
 }
 
