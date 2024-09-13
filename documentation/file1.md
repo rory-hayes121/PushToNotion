@@ -7,7 +7,7 @@ This is a markdown test file that will be used to create a Notion page using a G
 - Easily customizable
 - Integrates seamlessly with Notion's API
 
-## How It Works
+## How It Works?
 1. Write your documentation in markdown.
 2. Push it to your GitHub repository.
 3. Watch as your content gets converted into beautiful Notion pages.
