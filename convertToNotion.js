@@ -20,21 +20,44 @@ function markdownToBlocks(markdownContent) {
           object: 'block',
           type: `heading_${token.depth}`,
           [`heading_${token.depth}`]: {
-            text: [{ type: 'text', text: { content: token.text } }]
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: token.text || ''
+                }
+              }
+            ]
           }
         };
       case 'paragraph':
         return {
           object: 'block',
           type: 'paragraph',
-          paragraph: { text: [{ type: 'text', text: { content: token.text } }] }
+          paragraph: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: token.text || ''
+                }
+              }
+            ]
+          }
         };
       case 'list':
         return {
           object: 'block',
           type: token.ordered ? 'numbered_list_item' : 'bulleted_list_item',
           [token.ordered ? 'numbered_list_item' : 'bulleted_list_item']: {
-            text: [{ type: 'text', text: { content: token.text } }]
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: token.text || ''
+                }
+              }
+            ]
           }
         };
       case 'code':
@@ -42,7 +65,14 @@ function markdownToBlocks(markdownContent) {
           object: 'block',
           type: 'code',
           code: {
-            text: [{ type: 'text', text: { content: token.text } }],
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: token.text || ''
+                }
+              }
+            ],
             language: token.lang || 'plaintext'
           }
         };
@@ -70,6 +100,7 @@ async function createNotionPageFromMarkdown(filePath) {
       properties: {
         title: [
           {
+            type: 'text',
             text: {
               content: fileName,
             },
@@ -78,7 +109,7 @@ async function createNotionPageFromMarkdown(filePath) {
       },
       children: blocks,
     });
-    
+
     // Log response for debugging
     console.log('Notion API Response:', JSON.stringify(response, null, 2));
     console.log(`Page created for: ${fileName}`);
