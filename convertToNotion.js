@@ -53,37 +53,26 @@ function markdownToBlocks(markdownContent) {
         });
         break;
 
-      case 'list_start':
+      case 'list':
+        // Handle the list token
         currentListType = token.ordered ? 'numbered_list_item' : 'bulleted_list_item';
-        listItems = [];
-        console.log('List start:', currentListType);
-        break;
-
-      case 'list_item':
-        listItems.push({
-          object: 'block',
-          type: currentListType,
-          [currentListType]: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: token.text || ''
+        token.items.forEach(item => {
+          blocks.push({
+            object: 'block',
+            type: currentListType,
+            [currentListType]: {
+              rich_text: [
+                {
+                  type: 'text',
+                  text: {
+                    content: item.text || ''
+                  }
                 }
-              }
-            ]
-          }
+              ]
+            }
+          });
+          console.log('List item:', item.text);
         });
-        console.log('List item:', token.text);
-        break;
-
-      case 'list_end':
-        if (listItems.length > 0) {
-          blocks.push(...listItems);
-          console.log('List end:', listItems);
-        }
-        currentListType = null;
-        listItems = [];
         break;
 
       case 'code':
@@ -109,12 +98,6 @@ function markdownToBlocks(markdownContent) {
         break;
     }
   });
-
-  // Handle any remaining list items if the document ends with a list
-  if (listItems.length > 0) {
-    blocks.push(...listItems);
-    console.log('Remaining list items:', listItems);
-  }
 
   return blocks;
 }
