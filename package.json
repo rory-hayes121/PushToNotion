@@ -1,0 +1,12 @@
+{
+  "name": "notion-markdown-action",
+  "version": "1.0.0",
+  "main": "convertToNotion.js",
+  "scripts": {
+    "start": "node convertToNotion.js"
+  },
+  "dependencies": {
+    "@notionhq/client": "^1.0.0",
+    "markdown-it": "^12.0.0"
+  }
+}
