@@ -15,7 +15,9 @@ function markdownToBlocks(markdownContent) {
         return {
           object: 'block',
           type: `heading_${token.depth}`,
-          heading_1: { text: [{ type: 'text', text: { content: token.text } }] }
+          [`heading_${token.depth}`]: {
+            text: [{ type: 'text', text: { content: token.text } }]
+          }
         };
       case 'paragraph':
         return {
