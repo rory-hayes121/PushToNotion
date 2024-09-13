@@ -13,10 +13,14 @@ const parentPageId = process.env.PARENT_PAGE_ID;
 // Function to convert Markdown to Notion blocks
 function markdownToBlocks(markdownContent) {
   const tokens = marked.lexer(markdownContent);
-  const blocks = tokens.map(token => {
+  const blocks = [];
+  const stack = [];
+  let currentList = null;
+
+  tokens.forEach(token => {
     switch (token.type) {
       case 'heading':
-        return {
+        blocks.push({
           object: 'block',
           type: `heading_${token.depth}`,
           [`heading_${token.depth}`]: {
@@ -29,9 +33,11 @@ function markdownToBlocks(markdownContent) {
               }
             ]
           }
-        };
+        });
+        break;
+
       case 'paragraph':
-        return {
+        blocks.push({
           object: 'block',
           type: 'paragraph',
           paragraph: {
@@ -44,24 +50,46 @@ function markdownToBlocks(markdownContent) {
               }
             ]
           }
-        };
+        });
+        break;
+
       case 'list':
-        return {
-          object: 'block',
+        // Handle list start
+        currentList = {
           type: token.ordered ? 'numbered_list_item' : 'bulleted_list_item',
-          [token.ordered ? 'numbered_list_item' : 'bulleted_list_item']: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: token.text || ''
-                }
-              }
-            ]
-          }
+          items: []
         };
+        break;
+
+      case 'list_item':
+        if (currentList) {
+          currentList.items.push({
+            object: 'block',
+            type: currentList.type,
+            [currentList.type]: {
+              rich_text: [
+                {
+                  type: 'text',
+                  text: {
+                    content: token.text || ''
+                  }
+                }
+              ]
+            }
+          });
+        }
+        break;
+
+      // Handle the end of a list
+      case 'list_end':
+        if (currentList) {
+          blocks.push(...currentList.items);
+          currentList = null;
+        }
+        break;
+
       case 'code':
-        return {
+        blocks.push({
           object: 'block',
           type: 'code',
           code: {
@@ -75,11 +103,19 @@ function markdownToBlocks(markdownContent) {
             ],
             language: token.lang || 'plaintext'
           }
-        };
+        });
+        break;
+
       default:
-        return null;
+        // Skip unsupported tokens
+        break;
     }
-  }).filter(block => block !== null);
+  });
+
+  // Ensure any remaining list is processed
+  if (currentList) {
+    blocks.push(...currentList.items);
+  }
 
   return blocks;
 }
