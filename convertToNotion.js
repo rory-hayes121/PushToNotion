@@ -11,8 +11,6 @@ const notion = new Client({
   auth: notionToken,
 });
 
-const parentPageId = parentPageId;
-
 async function createNotionPageFromMarkdown(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const fileName = path.basename(filePath, '.md');
