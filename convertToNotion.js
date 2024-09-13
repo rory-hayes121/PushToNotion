@@ -14,7 +14,6 @@ const parentPageId = process.env.PARENT_PAGE_ID;
 function markdownToBlocks(markdownContent) {
   const tokens = marked.lexer(markdownContent);
   const blocks = [];
-  const stack = [];
   let currentList = null;
 
   tokens.forEach(token => {
@@ -54,7 +53,7 @@ function markdownToBlocks(markdownContent) {
         break;
 
       case 'list':
-        // Handle list start
+        // Start of a list
         currentList = {
           type: token.ordered ? 'numbered_list_item' : 'bulleted_list_item',
           items: []
@@ -80,8 +79,8 @@ function markdownToBlocks(markdownContent) {
         }
         break;
 
-      // Handle the end of a list
       case 'list_end':
+        // End of a list
         if (currentList) {
           blocks.push(...currentList.items);
           currentList = null;
