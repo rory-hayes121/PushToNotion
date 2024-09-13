@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'documentation/**'
-  # You can also trigger on pull requests if desired
+  # Uncomment if you want to trigger on pull requests
   # pull_request:
   #   paths:
   #     - 'documentation/**'
@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'  # Adjust Node.js version as needed
+          node-version: '16'
 
       - name: Install Dependencies
         run: npm install
