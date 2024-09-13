@@ -1,7 +1,7 @@
 const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
-const marked = require('marked'); // Markdown parser library
+const marked = require('marked');
 
 const notion = new Client({ auth: process.env.NOTION_API_TOKEN });
 const parentPageId = process.env.PARENT_PAGE_ID;
@@ -63,6 +63,11 @@ async function createNotionPage(markdownContent, title) {
 }
 
 // Read markdown files and trigger the Notion API call
-const markdownFilePath = path.join(__dirname, 'documentation/example.md');
-const markdownContent = fs.readFileSync(markdownFilePath, 'utf8');
-createNotionPage(markdownContent, 'Example Notion Page');
+const documentationDir = path.join(__dirname, 'documentation');
+fs.readdirSync(documentationDir).forEach(file => {
+  if (file.endsWith('.md')) {
+    const markdownFilePath = path.join(documentationDir, file);
+    const markdownContent = fs.readFileSync(markdownFilePath, 'utf8');
+    createNotionPage(markdownContent, file.replace('.md', ''));
+  }
+});
