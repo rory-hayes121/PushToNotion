@@ -60,6 +60,7 @@ function markdownToBlocks(markdownContent) {
 // Function to create a Notion page
 async function createNotionPage(markdownContent, title) {
   const blocks = markdownToBlocks(markdownContent);
+  console.log(`Creating Notion page: ${title}`);
   await notion.pages.create({
     parent: { page_id: parentPageId },
     properties: {
@@ -85,6 +86,7 @@ fs.readdirSync(documentationDir).forEach(file => {
     const currentHash = getFileHash(markdownFilePath);
 
     if (fileHashes[file] !== currentHash) {
+      console.log(`File changed: ${file}`);
       const markdownContent = fs.readFileSync(markdownFilePath, 'utf8');
       createNotionPage(markdownContent, file.replace('.md', ''));
       fileHashes[file] = currentHash;
