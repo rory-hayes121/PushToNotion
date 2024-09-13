@@ -56,6 +56,7 @@ function markdownToBlocks(markdownContent) {
       case 'list_start':
         currentListType = token.ordered ? 'numbered_list_item' : 'bulleted_list_item';
         listItems = [];
+        console.log('List start:', currentListType);
         break;
 
       case 'list_item':
@@ -73,11 +74,13 @@ function markdownToBlocks(markdownContent) {
             ]
           }
         });
+        console.log('List item:', token.text);
         break;
 
       case 'list_end':
         if (listItems.length > 0) {
           blocks.push(...listItems);
+          console.log('List end:', listItems);
         }
         currentListType = null;
         listItems = [];
@@ -110,6 +113,7 @@ function markdownToBlocks(markdownContent) {
   // Handle any remaining list items if the document ends with a list
   if (listItems.length > 0) {
     blocks.push(...listItems);
+    console.log('Remaining list items:', listItems);
   }
 
   return blocks;
