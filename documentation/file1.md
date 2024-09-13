@@ -1,4 +1,4 @@
-# Welcome to My First MarkDown Page
+# Welcome to My First Mark Down Page
 
 This is a markdown test file that will be used to create a Notion page using a GitHub Action.
 
