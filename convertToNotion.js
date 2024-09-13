@@ -125,6 +125,16 @@ async function createNotionPageFromMarkdown(filePath) {
           },
         ],
       },
+      icon: {
+      type: 'emoji',
+      emoji: '📚',  // You can change this to any emoji or use an image URL for external images
+        },
+        cover: {
+          type: 'external',
+          external: {
+            url: 'https://github.blog/wp-content/uploads/2023/01/1200x640-2.png?resize=1200%2C640',  // Replace with your cover image URL
+          },
+        },
       children: blocks,
     });
 

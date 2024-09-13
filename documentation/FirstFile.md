@@ -4,7 +4,7 @@ This is a markdown test file that will be used to create a Notion page using a G
 
 ## Key Features!!
 - Automatically converts markdown to Notion pages.
-- Easily customizable.
+- Easily customisable.
 - Integrates seamlessly with Notion's API.
 - Test.
 - Another line.
