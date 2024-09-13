@@ -1,14 +1,17 @@
 const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
-const markdown = require('markdown-it')(); // Markdown to HTML converter
+const markdown = require('markdown-it')(); 
+
+const notionToken = 'development_secret_ooAtYOigdRsHzmbZI02si4vDNc0kxBerEEaqEDqYar6';
+const parentPageId = '0ffadd06-ef6d-806b-85b9-f4d21a0ca5c8';
 
 // Initialize Notion client
 const notion = new Client({
-  auth: process.env.NOTION_API_TOKEN,
+  auth: notionToken,
 });
 
-const parentPageId = process.env.PARENT_PAGE_ID;
+const parentPageId = parentPageId;
 
 async function createNotionPageFromMarkdown(filePath) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
