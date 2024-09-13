@@ -1,7 +1,7 @@
 const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
-const marked = require('marked'); // Markdown lexer for more control
+const marked = require('marked');
 
 // Initialize Notion client
 const notion = new Client({
@@ -15,6 +15,7 @@ function markdownToBlocks(markdownContent) {
   const tokens = marked.lexer(markdownContent);
   const blocks = [];
   let currentList = null;
+  let listType = null;
 
   tokens.forEach(token => {
     switch (token.type) {
@@ -52,20 +53,18 @@ function markdownToBlocks(markdownContent) {
         });
         break;
 
-      case 'list':
-        // Start of a list
-        currentList = {
-          type: token.ordered ? 'numbered_list_item' : 'bulleted_list_item',
-          items: []
-        };
+      case 'list_start':
+        // Start a new list
+        listType = token.ordered ? 'numbered_list_item' : 'bulleted_list_item';
         break;
 
       case 'list_item':
-        if (currentList) {
-          currentList.items.push({
+        // Add list item to current list
+        if (listType) {
+          blocks.push({
             object: 'block',
-            type: currentList.type,
-            [currentList.type]: {
+            type: listType,
+            [listType]: {
               rich_text: [
                 {
                   type: 'text',
@@ -81,10 +80,7 @@ function markdownToBlocks(markdownContent) {
 
       case 'list_end':
         // End of a list
-        if (currentList) {
-          blocks.push(...currentList.items);
-          currentList = null;
-        }
+        listType = null;
         break;
 
       case 'code':
@@ -110,11 +106,6 @@ function markdownToBlocks(markdownContent) {
         break;
     }
   });
-
-  // Ensure any remaining list is processed
-  if (currentList) {
-    blocks.push(...currentList.items);
-  }
 
   return blocks;
 }
