@@ -14,8 +14,8 @@ const parentPageId = process.env.PARENT_PAGE_ID;
 function markdownToBlocks(markdownContent) {
   const tokens = marked.lexer(markdownContent);
   const blocks = [];
-  let currentList = null;
-  let listType = null;
+  let currentListType = null;
+  let listItems = [];
 
   tokens.forEach(token => {
     switch (token.type) {
@@ -54,33 +54,33 @@ function markdownToBlocks(markdownContent) {
         break;
 
       case 'list_start':
-        // Start a new list
-        listType = token.ordered ? 'numbered_list_item' : 'bulleted_list_item';
+        currentListType = token.ordered ? 'numbered_list_item' : 'bulleted_list_item';
+        listItems = [];
         break;
 
       case 'list_item':
-        // Add list item to current list
-        if (listType) {
-          blocks.push({
-            object: 'block',
-            type: listType,
-            [listType]: {
-              rich_text: [
-                {
-                  type: 'text',
-                  text: {
-                    content: token.text || ''
-                  }
+        listItems.push({
+          object: 'block',
+          type: currentListType,
+          [currentListType]: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: token.text || ''
                 }
-              ]
-            }
-          });
-        }
+              }
+            ]
+          }
+        });
         break;
 
       case 'list_end':
-        // End of a list
-        listType = null;
+        if (listItems.length > 0) {
+          blocks.push(...listItems);
+        }
+        currentListType = null;
+        listItems = [];
         break;
 
       case 'code':

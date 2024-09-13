@@ -12,7 +12,7 @@ This is a markdown test file that will be used to create a Notion page using a G
 1. Write your documentation in markdown.
 2. Push it to your GitHub repository.
 3. Watch as your content gets converted into beautiful Notion pages.
-4. Test.
+4. Another Test.
 
 ## Some Sample Code!
 ```javascript
