@@ -1,7 +1,6 @@
 const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
-const markdown = require('markdown-it')(); // Markdown to HTML converter
 const marked = require('marked'); // Markdown lexer for more control
 
 // Initialize Notion client
@@ -47,14 +46,6 @@ function markdownToBlocks(markdownContent) {
             language: token.lang || 'plaintext'
           }
         };
-      case 'list_item':
-        return {
-          object: 'block',
-          type: 'bulleted_list_item',
-          bulleted_list_item: {
-            text: [{ type: 'text', text: { content: token.text } }]
-          }
-        };
       default:
         return null;
     }
@@ -69,22 +60,32 @@ async function createNotionPageFromMarkdown(filePath) {
   const fileName = path.basename(filePath, '.md');
   const blocks = markdownToBlocks(fileContent);
 
-  // Notion API request to create a page
-  await notion.pages.create({
-    parent: { page_id: parentPageId },
-    properties: {
-      title: [
-        {
-          text: {
-            content: fileName,
-          },
-        },
-      ],
-    },
-    children: blocks,
-  });
+  // Log blocks for debugging
+  console.log('Blocks to be sent:', JSON.stringify(blocks, null, 2));
 
-  console.log(`Page created for: ${fileName}`);
+  try {
+    // Notion API request to create a page
+    const response = await notion.pages.create({
+      parent: { page_id: parentPageId },
+      properties: {
+        title: [
+          {
+            text: {
+              content: fileName,
+            },
+          },
+        ],
+      },
+      children: blocks,
+    });
+    
+    // Log response for debugging
+    console.log('Notion API Response:', JSON.stringify(response, null, 2));
+    console.log(`Page created for: ${fileName}`);
+  } catch (error) {
+    // Log errors if any
+    console.error('Error creating Notion page:', error);
+  }
 }
 
 async function convertMarkdownFilesToNotion() {

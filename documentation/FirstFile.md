@@ -12,7 +12,7 @@ This is a markdown test file that will be used to create a Notion page using a G
 2. Push it to your GitHub repository.
 3. Watch as your content gets converted into beautiful Notion pages.
 
-## Some Sample Code
+## Some Sample Code!
 ```javascript
 const notion = new Client({ auth: process.env.NOTION_API_TOKEN });
 notion.pages.create({
