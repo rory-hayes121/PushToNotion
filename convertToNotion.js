@@ -1,63 +1,66 @@
 const { Client } = require('@notionhq/client');
 const fs = require('fs');
 const path = require('path');
-const markdown = require('markdown-it')(); 
+const marked = require('marked'); // Markdown parser library
 
-const notionToken = 'development_secret_ooAtYOigdRsHzmbZI02si4vDNc0kxBerEEaqEDqYar6';
-const parentPageId = '0ffadd06-ef6d-806b-85b9-f4d21a0ca5c8';
+const notion = new Client({ auth: process.env.NOTION_API_TOKEN });
+const parentPageId = process.env.PARENT_PAGE_ID;
 
-// Initialize Notion client
-const notion = new Client({
-  auth: notionToken,
-});
+// Function to convert markdown to Notion blocks
+function markdownToBlocks(markdownContent) {
+  const tokens = marked.lexer(markdownContent);
+  const blocks = tokens.map(token => {
+    switch (token.type) {
+      case 'heading':
+        return {
+          object: 'block',
+          type: `heading_${token.depth}`,
+          heading_1: { text: [{ type: 'text', text: { content: token.text } }] }
+        };
+      case 'paragraph':
+        return {
+          object: 'block',
+          type: 'paragraph',
+          paragraph: { text: [{ type: 'text', text: { content: token.text } }] }
+        };
+      case 'list':
+        return {
+          object: 'block',
+          type: token.ordered ? 'numbered_list_item' : 'bulleted_list_item',
+          [token.ordered ? 'numbered_list_item' : 'bulleted_list_item']: {
+            text: [{ type: 'text', text: { content: token.text } }]
+          }
+        };
+      case 'code':
+        return {
+          object: 'block',
+          type: 'code',
+          code: {
+            text: [{ type: 'text', text: { content: token.text } }],
+            language: token.lang || 'plaintext'
+          }
+        };
+      default:
+        return null;
+    }
+  }).filter(block => block !== null);
 
-async function createNotionPageFromMarkdown(filePath) {
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const fileName = path.basename(filePath, '.md');
-  const markdownContent = markdown.render(fileContent);
+  return blocks;
+}
 
-  // Notion API request to create a page
+// Function to create a Notion page
+async function createNotionPage(markdownContent, title) {
+  const blocks = markdownToBlocks(markdownContent);
   await notion.pages.create({
     parent: { page_id: parentPageId },
     properties: {
-      title: [
-        {
-          text: {
-            content: fileName,
-          },
-        },
-      ],
+      title: [{ text: { content: title } }]
     },
-    children: [
-      {
-        object: 'block',
-        type: 'paragraph',
-        paragraph: {
-          rich_text: [
-            {
-              text: {
-                content: markdownContent,
-              },
-            },
-          ],
-        },
-      },
-    ],
+    children: blocks
   });
-
-  console.log(`Page created for: ${fileName}`);
 }
 
-async function convertMarkdownFilesToNotion() {
-  const directoryPath = path.join(__dirname, 'documentation');
-  const files = fs.readdirSync(directoryPath);
-
-  for (const file of files) {
-    if (path.extname(file) === '.md') {
-      const filePath = path.join(directoryPath, file);
-      await createNotionPageFromMarkdown(filePath);
-    }
-  }
-}
-
-convertMarkdownFilesToNotion().catch(console.error);
+// Read markdown files and trigger the Notion API call
+const markdownFilePath = path.join(__dirname, 'documentation/example.md');
+const markdownContent = fs.readFileSync(markdownFilePath, 'utf8');
+createNotionPage(markdownContent, 'Example Notion Page');
