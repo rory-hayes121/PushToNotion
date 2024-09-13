@@ -1,0 +1,31 @@
+name: Convert Markdown to Notion
+
+on:
+  push:
+    paths:
+      - 'documentation/**'
+  # Uncomment if you want to trigger on pull requests
+  # pull_request:
+  #   paths:
+  #     - 'documentation/**'
+
+jobs:
+  convert_to_notion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Conversion Script
+        run: node convertToNotion.js
+        env:
+          NOTION_API_TOKEN: ${{ secrets.NOTION_API_TOKEN }}
+          PARENT_PAGE_ID: ${{ secrets.PARENT_PAGE_ID }}
