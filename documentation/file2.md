@@ -1,6 +1,6 @@
 # Welcome to My Second MarkDown Page
 
-This is a markdown test file that will be used to create a Notion page using a GitHub Action.
+This is a markdown test file that will be used to create a Notion page using a GitHub Action 2.
 
 ## Key Features
 - Automatically converts markdown to Notion pages
