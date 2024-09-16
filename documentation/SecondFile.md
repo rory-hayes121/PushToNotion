@@ -2,13 +2,13 @@
 
 This is a markdown test file that will be used to create a Notion page using a GitHub Action 2.
 
-## Key Features!
+## Key Features!!
 - Automatically converts markdown to Notion pages.
 - Easily customisable.
 - Integrates seamlessly with Notion's API.
 - One More.
 
-## How It Works?
+## How It Works??
 1. Write your documentation in markdown.
 2. Push it to your GitHub repository.
 3. Watch as your content gets converted into beautiful Notion pages.
