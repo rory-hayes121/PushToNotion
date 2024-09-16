@@ -40,20 +40,36 @@ function markdownToBlocks(markdownContent) {
         break;
 
       case 'paragraph':
-        blocks.push({
-          object: 'block',
-          type: 'paragraph',
-          paragraph: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: token.text || ''
-                }
+        // Check if the paragraph contains an image token
+        if (token.tokens && token.tokens[0] && token.tokens[0].type === 'image') {
+          const imageToken = token.tokens[0];
+          blocks.push({
+            object: 'block',
+            type: 'image',
+            image: {
+              type: 'external',
+              external: {
+                url: imageToken.href // Extract URL of the image
               }
-            ]
-          }
-        });
+            }
+          });
+        } else {
+          // Otherwise, treat it as a normal paragraph
+          blocks.push({
+            object: 'block',
+            type: 'paragraph',
+            paragraph: {
+              rich_text: [
+                {
+                  type: 'text',
+                  text: {
+                    content: token.text || ''
+                  }
+                }
+              ]
+            }
+          });
+        }
         break;
 
       case 'list_start':
