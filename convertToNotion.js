@@ -53,25 +53,46 @@ function markdownToBlocks(markdownContent) {
         });
         break;
 
-      case 'list':
-        // Handle the list token
+      case 'list_start':
         currentListType = token.ordered ? 'numbered_list_item' : 'bulleted_list_item';
-        token.items.forEach(item => {
-          blocks.push({
-            object: 'block',
-            type: currentListType,
-            [currentListType]: {
-              rich_text: [
-                {
-                  type: 'text',
-                  text: {
-                    content: item.text || ''
-                  }
+        listItems = [];
+        break;
+
+      case 'list_item':
+        listItems.push({
+          object: 'block',
+          type: currentListType,
+          [currentListType]: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: token.text || ''
                 }
-              ]
+              }
+            ]
+          }
+        });
+        break;
+
+      case 'list_end':
+        if (listItems.length > 0) {
+          blocks.push(...listItems);
+        }
+        currentListType = null;
+        listItems = [];
+        break;
+
+      case 'image':
+        blocks.push({
+          object: 'block',
+          type: 'image',
+          image: {
+            type: 'external',
+            external: {
+              url: token.href, // URL of the image
             }
-          });
-          console.log('List item:', item.text);
+          }
         });
         break;
 
@@ -99,6 +120,11 @@ function markdownToBlocks(markdownContent) {
     }
   });
 
+  // Handle any remaining list items if the document ends with a list
+  if (listItems.length > 0) {
+    blocks.push(...listItems);
+  }
+
   return blocks;
 }
 
@@ -125,16 +151,6 @@ async function createNotionPageFromMarkdown(filePath) {
           },
         ],
       },
-      icon: {
-      type: 'emoji',
-      emoji: '📚',
-        },
-        cover: {
-          type: 'external',
-          external: {
-            url: 'https://github.blog/wp-content/uploads/2023/01/1200x640-2.png?resize=1200%2C640',  // Replace with your cover image URL
-          },
-        },
       children: blocks,
     });
 

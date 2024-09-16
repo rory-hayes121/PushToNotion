@@ -4,7 +4,7 @@ This is a markdown test file that will be used to create a Notion page using a G
 
 ## Key Features!!
 - Automatically converts markdown to Notion pages.
-- Easily customisable.
+- Easily customiable.
 - Integrates seamlessly with Notion's API.
 - Test.
 - Another line.
@@ -16,6 +16,10 @@ This is a markdown test file that will be used to create a Notion page using a G
 4. Another Test.
 5. Fifth line.
 
+## Some Image!
+![Alt text](https://github.blog/wp-content/uploads/2023/01/1200x640-2.png?resize=1200%2C640 "a sample image title")
+
+
 ## Some Sample Code!
 ```javascript
 const notion = new Client({ auth: process.env.NOTION_API_TOKEN });
@@ -23,4 +27,3 @@ notion.pages.create({
   parent: { page_id: process.env.PARENT_PAGE_ID },
   properties: { title: [{ text: { content: 'New Page' } }] },
 });
-
