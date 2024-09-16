@@ -17,6 +17,9 @@ function markdownToBlocks(markdownContent) {
   let currentListType = null;
   let listItems = [];
 
+  // Log the tokens to debug if image tokens are being parsed
+  console.log('Parsed Markdown Tokens:', tokens);
+
   tokens.forEach(token => {
     switch (token.type) {
       case 'heading':
@@ -84,6 +87,9 @@ function markdownToBlocks(markdownContent) {
         break;
 
       case 'image':
+        // Log the image token to verify it's being parsed
+        console.log('Image token:', token);
+
         // Add support for image blocks
         blocks.push({
           object: 'block',
