@@ -127,7 +127,7 @@ async function createNotionPageFromMarkdown(filePath) {
       },
       icon: {
       type: 'emoji',
-      emoji: '📚',  // You can change this to any emoji or use an image URL for external images
+      emoji: '📚',
         },
         cover: {
           type: 'external',
