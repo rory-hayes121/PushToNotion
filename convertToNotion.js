@@ -84,13 +84,14 @@ function markdownToBlocks(markdownContent) {
         break;
 
       case 'image':
+        // Add support for image blocks
         blocks.push({
           object: 'block',
           type: 'image',
           image: {
             type: 'external',
             external: {
-              url: token.href, // URL of the image
+              url: token.href // URL of the image
             }
           }
         });

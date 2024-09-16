@@ -17,7 +17,7 @@ This is a markdown test file that will be used to create a Notion page using a G
 5. Fifth line.
 
 ## Some Image!
-![Alt text](https://github.blog/wp-content/uploads/2023/01/1200x640-2.png?resize=1200%2C640 "a sample image title")
+![Alt text](https://github.blog/wp-content/uploads/2023/01/1200x640-2.png "a sample image title")
 
 
 ## Some Sample Code!
